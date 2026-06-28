@@ -1,19 +1,22 @@
 <template>
-    <div ref="container"></div>
+    <canvas class="game-canvas" ref="canvas"></canvas>
+    <!-- <div ref="container"></div> -->
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import * as THREE from 'three';
 import Cube from '../three/Cube';
+import Game from '../three/Game';
 import CubeGroup, { CubeGroupTypeEnum, type CubeGroupType } from '../three/CubeGroup';
 const container = ref<HTMLDivElement | null>(null);
+const canvas = ref<HTMLCanvasElement | null>(null);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setAnimationLoop(animate);
-document.body.appendChild(renderer.domElement);
+// document.body.appendChild(renderer.domElement);
 
 const box = new THREE.Group()
 
@@ -52,7 +55,9 @@ onMounted(() => {
     // camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     // renderer = new THREE.WebGLRenderer();
     // renderer.setSize(window.innerWidth, window.innerHeight);
-    container.value?.appendChild?.(renderer.domElement);
+    // container.value?.appendChild?.(renderer.domElement);
+    const game = new Game(canvas.value!);
+
     // scene.add(camera);
     // camera.position.z = 5;
     // sphere = new THREE.SphereGeometry(1, 32, 32);
@@ -61,4 +66,10 @@ onMounted(() => {
     // scene.add(sphereMesh);
 });
 </script>
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.game-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+</style>

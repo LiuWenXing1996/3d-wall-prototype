@@ -5,5 +5,16 @@ import GameScene from './components/GameScene.vue'
 
 <template>
   <!-- <ThreeTest /> -->
-  <GameScene />
+  <div class="game-container">
+    <GameScene />
+  </div>
+
 </template>
+<style lang="less" scoped>
+.game-container {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+</style>
