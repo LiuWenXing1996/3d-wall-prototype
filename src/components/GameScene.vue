@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import Cube from '../three/Cube';
 import Game from '../three/Game';
 import CubeGroup, { CubeGroupTypeEnum, type CubeGroupType } from '../three/CubeGroup';
+import { addDevGui } from '../three/gui';
 const container = ref<HTMLDivElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 const scene = new THREE.Scene();
@@ -57,6 +58,7 @@ onMounted(() => {
     // renderer.setSize(window.innerWidth, window.innerHeight);
     // container.value?.appendChild?.(renderer.domElement);
     const game = new Game(canvas.value!);
+    addDevGui(game);
 
     // scene.add(camera);
     // camera.position.z = 5;
