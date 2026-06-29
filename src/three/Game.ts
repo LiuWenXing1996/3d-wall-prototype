@@ -21,10 +21,10 @@ export default class Game {
       3000,
     );
     this.camera = camera;
-    // camera.position.set(200, 200, 200);
-    camera.position.x = -10;
-    camera.position.y = 10;
-    camera.position.z = 10;
+    camera.position.set(0, 0, 10);
+    // camera.position.x = -10;
+    // camera.position.y = 10;
+    // camera.position.z = 10;
     camera.lookAt(0, 0, 0);
     // const axesHelper = new AxesHelper(100);
     // axesHelper.setColors("red", "green", "blue"); // 设置坐标轴颜色

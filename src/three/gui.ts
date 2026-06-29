@@ -10,10 +10,30 @@ const gui = new GUI();
  */
 export const addDevGui = (game: Game) => {
   const folder = gui.addFolder("开发");
+  // 斜向视角
+  {
+    const cameraOriginPosition = game.camera.position.clone();
+    const cameraOriginRotation = game.camera.rotation.clone();
+    folder
+      .add(
+        {
+          cameraDownward: false,
+        },
+        "cameraDownward",
+      )
+      .name("斜向视角")
+      .onChange((value: boolean) => {
+        if (value) {
+          game.camera.position.set(-10, 10, 10);
+          game.camera.lookAt(0, 0, 0);
+        } else {
+          game.camera.position.copy(cameraOriginPosition);
+          game.camera.rotation.copy(cameraOriginRotation);
+        }
+      });
+  }
   // 支持自由视角切换
   {
-    // const cameraOriginPosition = game.camera.position.clone();
-    // const cameraOriginRotation = game.camera.rotation.clone();
     const controls = new OrbitControls(game.camera, game.renderer.domElement);
     controls.enabled = false;
     folder
@@ -23,8 +43,6 @@ export const addDevGui = (game: Game) => {
         controls.enabled = value;
         if (!value) {
           controls.reset();
-          //   game.camera.position.copy(cameraOriginPosition);
-          //   game.camera.rotation.copy(cameraOriginRotation);
         }
       });
   }
