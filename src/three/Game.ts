@@ -21,10 +21,7 @@ export default class Game {
       3000,
     );
     this.camera = camera;
-    camera.position.set(0, 0, 10);
-    // camera.position.x = -10;
-    // camera.position.y = 10;
-    // camera.position.z = 10;
+    camera.position.set(10, 10, 10);
     camera.lookAt(0, 0, 0);
     // const axesHelper = new AxesHelper(100);
     // axesHelper.setColors("red", "green", "blue"); // 设置坐标轴颜色
@@ -32,7 +29,7 @@ export default class Game {
     // // 2. 将坐标轴添加到场景中
     // scene.add(axesHelper);
 
-    const floor = new Floor(scene, 4, 4, 5);
+    const floor = new Floor(scene, 5, 5, 10);
 
     // const threeSidedGrid = new ThreeSidedGrid(scene);
     // threeSidedGrid.group.rotateX(Math.PI / 3);

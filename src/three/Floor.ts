@@ -1,6 +1,9 @@
 import {
   DoubleSide,
+  EdgesGeometry,
   Group,
+  LineBasicMaterial,
+  LineSegments,
   Mesh,
   MeshBasicMaterial,
   PlaneGeometry,
@@ -25,58 +28,61 @@ export default class Floor {
 
     // 地板
     this.floor = this.renderPlaneGrid(width, depth);
-    // this.floor.rotation.x = Math.PI / 2;
+    this.floor.rotation.x = -Math.PI / 2;
+    this.floor.position.z = depth;
     this.group.add(this.floor);
 
     // 左墙
-    // this.wallL = this.renderPlaneGrid(width, height);
-    // this.wallL.rotation.z = Math.PI / 2;
-    // this.wallL.rotation.x = Math.PI / 2;
-    // this.wallL.position.y += width / 2;
-    // this.wallL.position.x -= 0.5;
-    // this.group.add(this.wallL);
+    this.wallL = this.renderPlaneGrid(depth, height);
+    this.wallL.rotation.y = Math.PI / 2;
+    this.wallL.position.z = depth;
+    this.group.add(this.wallL);
     // 右墙
-    // this.wallR = this.renderPlaneGrid(width, height);
-    // this.wallR.rotation.z = Math.PI / 2;
-    // this.wallR.rotation.x = Math.PI / 2;
-    // this.wallR.position.y += width / 2;
-    // this.wallR.position.x += width - 0.5;
-    // this.group.add(this.wallR);
+    this.wallR = this.renderPlaneGrid(depth, height);
+    this.wallR.rotateY(-Math.PI / 2);
+    this.wallR.position.x = width;
+    this.group.add(this.wallR);
     // 前墙
-    // this.wallF = this.renderPlaneGrid(width, height);
-    // this.wallF.rotation.x = Math.PI / 2;
-    // this.wallF.position.y += width / 2;
-    // this.wallF.position.z += width - 0.5;
-    // this.group.add(this.wallF);
+    this.wallF = this.renderPlaneGrid(width, height);
+    this.group.add(this.wallF);
     // 后墙
-    // this.wallB = this.renderPlaneGrid(width, height);
-    // this.wallB.rotation.x = Math.PI / 2;
-    // this.wallB.position.y += width / 2;
-    // this.wallB.position.z -= 0.5;
-    // this.group.add(this.wallB);
+    this.wallB = this.renderPlaneGrid(width, height);
+    this.wallB.rotation.y = Math.PI;
+    this.wallB.position.z = depth;
+    this.wallB.position.x = width;
+    this.group.add(this.wallB);
   }
 
   renderPlane() {
-    const scale = 0.95;
-    const geometry = new PlaneGeometry(1, 1);
+    const group = new Group();
+    const geometry = new PlaneGeometry(0.9, 0.9);
     const material = new MeshBasicMaterial({
       color: "white",
-      side: DoubleSide,
+      // side: DoubleSide,
     });
+    const lineSegments = new LineSegments(
+      new EdgesGeometry(geometry),
+      new LineBasicMaterial({ color: "red" }),
+    );
+
     const line = new Mesh(geometry, material);
+    line.position.set(0.5, 0.5, 0);
+    lineSegments.position.set(0.5, 0.5, 0);
+    group.add(line);
+    // group.add(lineSegments);
     // line.material.uniforms.u_color.value = new THREE.Color(CFG.enclosure.color);
     // line.material.uniforms.u_factor.value = CFG.enclosure.noiseFactor;
     // line.material.side = THREE.DoubleSide;
     // line.material.depthTest = false;
-    line.scale.set(scale, scale, scale);
     // line.rotation.x = Math.PI / 2;
-    return line;
+    return group;
   }
   renderPlaneGrid(w: number, h: number) {
     const group = new Group();
     for (let x = 0; x < w; x += 1) {
       for (let y = 0; y < h; y += 1) {
         const p = this.renderPlane();
+        console.log({ x, y });
         p.position.x = x;
         p.position.y = y;
         group.add(p);
