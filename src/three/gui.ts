@@ -4,7 +4,6 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { AxesHelper, GridHelper } from "three";
 import StraightTetromino from "./Tetromino";
 import type { Nullable } from "../types";
-import StraightTetrominoTest from "./StraightTetromino";
 const gui = new GUI();
 
 /**
@@ -55,7 +54,7 @@ export const addDevGui = (game: Game) => {
 };
 export const addStraightTetrominoGui = (game: Game) => {
   const folder = gui.addFolder("直线骨牌");
-  let testTetromino: Nullable<StraightTetrominoTest> = null;
+  let testTetromino: Nullable<StraightTetromino> = null;
   // 添加一个测试直线骨牌
   {
     folder
@@ -63,7 +62,7 @@ export const addStraightTetrominoGui = (game: Game) => {
         {
           addTetromino: () => {
             if (!testTetromino) {
-              testTetromino = new StraightTetrominoTest(game);
+              testTetromino = new StraightTetromino(game);
               // testTetromino.group.position.set(0, 20, 0);
             } else {
               testTetromino.show();

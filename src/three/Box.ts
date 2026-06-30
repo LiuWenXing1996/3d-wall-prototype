@@ -38,18 +38,6 @@ export default class Box extends GameObject {
       new EdgesGeometry(this.boxGeometry),
       new LineBasicMaterial({ color: config.lineSegments.color }),
     );
-    // // 坐标中心对齐到原点
-    // this.mesh.position.set(
-    //   config.width / 2,
-    //   config.height / 2,
-    //   config.depth / 2,
-    // );
-    // lineSegments.position.set(
-    //   config.width / 2,
-    //   config.height / 2,
-    //   config.depth / 2,
-    // );
-
     this.group.add(this.mesh);
     this.group.add(lineSegments);
   }
