@@ -2,8 +2,16 @@ import { AxesHelper, PerspectiveCamera, Scene, WebGLRenderer } from "three";
 import CubeGroup, { CubeGroupTypeEnum, type CubeGroupType } from "./CubeGroup";
 import ThreeSidedGrid from "./ThreeSidedGrid";
 import Floor from "./Floor";
+import Cube from "./Cube";
+import StraightTetromino from "./Tetromino";
 
 export default class Game {
+  // 地图大小: width, depth, height(宽度、深度、高度)
+  readonly mapSize = Object.freeze({
+    width: 10,
+    depth: 10,
+    height: 20,
+  });
   scene: Scene;
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
@@ -11,8 +19,14 @@ export default class Game {
   constructor(canvas: HTMLCanvasElement) {
     const renderer = new WebGLRenderer({ antialias: true, canvas });
     const scene = new Scene();
+    this.scene = scene;
+    this.renderer = renderer;
+
     const width = 750;
     const height = 1624;
+    // const currentType = CubeGroupTypeEnum.OrangeRicky;
+    // const cubeGroup = new CubeGroup(scene, currentType);
+    // cubeGroup.group.position.set(0, 10, 0);
 
     const camera = new PerspectiveCamera(
       75,
@@ -21,7 +35,8 @@ export default class Game {
       3000,
     );
     this.camera = camera;
-    camera.position.set(10, 10, 10);
+
+    camera.position.set(20, 30, 20);
     camera.lookAt(0, 0, 0);
     // const axesHelper = new AxesHelper(100);
     // axesHelper.setColors("red", "green", "blue"); // 设置坐标轴颜色
@@ -29,7 +44,13 @@ export default class Game {
     // // 2. 将坐标轴添加到场景中
     // scene.add(axesHelper);
 
-    const floor = new Floor(scene, 5, 5, 10);
+    const floor = new Floor(
+      scene,
+      this.mapSize.width,
+      this.mapSize.depth,
+      this.mapSize.height,
+    );
+    // const straightTetromino = new StraightTetromino(this);
 
     // const threeSidedGrid = new ThreeSidedGrid(scene);
     // threeSidedGrid.group.rotateX(Math.PI / 3);
@@ -74,7 +95,5 @@ export default class Game {
       renderer.render(scene, camera);
     }
     renderer.setAnimationLoop(animate);
-    this.scene = scene;
-    this.renderer = renderer;
   }
 }

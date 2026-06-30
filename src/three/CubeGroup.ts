@@ -1,6 +1,9 @@
 import { Group, Scene } from "three";
 import Cube from "./Cube";
 
+/**
+ * 立方体组
+ */
 export default class CubeGroup {
   group: Group;
   scene: Scene;
@@ -44,10 +47,10 @@ export const CubeGroupTypes: Record<
    */
   OrangeRicky: {
     blocks: [
+      { x: 0, y: 0, z: 0 },
       { x: 1, y: 0, z: 0 },
-      { x: 0, y: -1, z: 0 },
-      { x: 1, y: -1, z: 0 },
-      { x: -1, y: -1, z: 0 },
+      { x: 2, y: 0, z: 0 },
+      { x: 2, y: 1, z: 0 },
     ],
     color: "#ff9562",
   },
