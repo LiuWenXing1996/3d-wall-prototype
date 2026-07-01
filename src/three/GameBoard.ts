@@ -1,10 +1,11 @@
-import { Matrix4, Object3D, Vector3 } from "three";
+import { Euler, Matrix4, Object3D, Quaternion, Vector3 } from "three";
 import Polyomino, { PolyominoTypeEnum, type PolyominoType } from "./Polyomino";
 import type { Nullable } from "../types";
 import { cloneDeep } from "es-toolkit";
 import FixedCubeList from "./FixedCubeList";
 import GameBoardFloor from "./GameBoardFloor";
 import GameBoardWall from "./GameBoardWall";
+import PolyominoRotator from "./PolyominoRotator";
 // TODO:尝试编写单元测试案例，测试GameBoard类的功能，包括下落、碰撞检测、固定方块等
 export class GameBoard extends Object3D {
   worldSize: { width: number; depth: number; height: number } = {
@@ -13,11 +14,13 @@ export class GameBoard extends Object3D {
     height: 20,
   };
   currentPolyomino: Nullable<Polyomino> = null;
+  polyominoRotator: PolyominoRotator;
   private lastDropTime: number = 0; // 上次下落时间（毫秒）
   private dropInterval: number = 1000; // 下落间隔（毫秒），默认1秒下落一格
   fixedCubeList: FixedCubeList;
   constructor() {
     super();
+    this.polyominoRotator = new PolyominoRotator(this);
     // 创建地板
     const floor = new GameBoardFloor({
       width: this.worldSize.width,
@@ -231,5 +234,51 @@ export class GameBoard extends Object3D {
    */
   stepMoveCurrentPolyominoZ(step: number) {
     this.stepMoveCurrentPolyomino(0, 0, step);
+  }
+  /**
+   * 在指定轴方向上旋转当前连块
+   * @param x 旋转角度
+   * @param y 旋转角度
+   * @param z 旋转角度
+   */
+  /**
+   * 预览按步旋转后的方块位置
+   * @param x 旋转步数
+   * @param y 旋转步数
+   * @param z 旋转步数
+   */
+  stepRotateCurrentPolyominoPreview(x?: number, y?: number, z?: number) {
+    if (!this.currentPolyomino) return false;
+    this.polyominoRotator.stepRotatePreview(this.currentPolyomino, {
+      x,
+      y,
+      z,
+    });
+  }
+  stepRotateCurrentPolyominoX(step: number) {
+    if (!this.currentPolyomino) return false;
+    this.polyominoRotator.stepRotate(this.currentPolyomino, {
+      x: step,
+    });
+  }
+  /**
+   * 在y轴方向按规定角度间隔分步旋转当前连块
+   * @param step 旋转角度步数，单步旋转角度为π/2度
+   */
+  stepRotateCurrentPolyominoY(step: number) {
+    if (!this.currentPolyomino) return false;
+    this.polyominoRotator.stepRotate(this.currentPolyomino, {
+      y: step,
+    });
+  }
+  /**
+   * 在z轴方向按规定角度间隔分步旋转当前连块
+   * @param step 旋转角度步数，单步旋转角度为π/2度
+   */
+  stepRotateCurrentPolyominoZ(step: number) {
+    if (!this.currentPolyomino) return false;
+    this.polyominoRotator.stepRotate(this.currentPolyomino, {
+      z: step,
+    });
   }
 }

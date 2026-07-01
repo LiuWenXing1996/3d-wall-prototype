@@ -18,7 +18,7 @@ export default class Polyomino extends Object3D {
     }
   }
   /**
-   * TODO:在 GameBoard 中实现旋转后，删除此方法
+   * TODO: 在 GameBoard 中实现旋转后，删除此方法
    * 在指定轴方向上旋转
    * @param x 旋转角度
    * @param y 旋转角度
@@ -47,8 +47,11 @@ export default class Polyomino extends Object3D {
       position.clone().add(this.position.clone()),
     );
     // 检查是否发生碰撞
-    if (false) {
-      return;
+    if (
+      newBlockPositions.some((position) => {
+        // this.checkCollision(position.x, position.y, position.z)
+      })
+    ) {
     }
     predictedPositions.forEach((predictedLocalPos, index) => {
       const block = this.cubeList[index];
