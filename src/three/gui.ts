@@ -1,9 +1,11 @@
 import GUI from "lil-gui";
 import type Game from "./Game";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { AxesHelper, GridHelper } from "three";
+import { AxesHelper, GridHelper, Line, LineBasicMaterial } from "three";
 import StraightTetromino from "./Tetromino";
 import type { Nullable } from "../types";
+import CustomAxesHelper from "./CustomAxesHelper";
+import Polyomino from "./Polyomino";
 const gui = new GUI();
 
 /**
@@ -28,8 +30,8 @@ export const addDevGui = (game: Game) => {
   }
   // 显示坐标轴
   {
-    const axesHelper = new AxesHelper(100);
-    axesHelper.setColors("red", "green", "blue"); // 设置坐标轴颜色
+    const axesHelper = new CustomAxesHelper();
+    // axesHelper.setColors("red", "green", "blue"); // 设置坐标轴颜色
     axesHelper.visible = false;
     game.scene.add(axesHelper);
     folder
@@ -54,7 +56,7 @@ export const addDevGui = (game: Game) => {
 };
 export const addStraightTetrominoGui = (game: Game) => {
   const folder = gui.addFolder("直线骨牌");
-  let testTetromino: Nullable<StraightTetromino> = null;
+  let testTetromino: Nullable<Polyomino> = null;
   // 添加一个测试直线骨牌
   {
     folder
@@ -62,10 +64,10 @@ export const addStraightTetrominoGui = (game: Game) => {
         {
           addTetromino: () => {
             if (!testTetromino) {
-              testTetromino = new StraightTetromino(game);
-              // testTetromino.group.position.set(0, 20, 0);
+              testTetromino = new Polyomino();
+              testTetromino.position.set(5, 20, 5);
+              game.gameWorld.add(testTetromino);
             } else {
-              testTetromino.show();
             }
           },
         },

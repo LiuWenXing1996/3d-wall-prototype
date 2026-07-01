@@ -30,7 +30,7 @@ export default class Cube {
     // 顶点对齐到原点
     // this.mesh.position.set(0.5, 0.5, 0.5);
     // lineSegments.position.set(0.5, 0.5, 0.5);
-    
+
     this.group.add(this.mesh);
     this.group.add(lineSegments);
     this.scene.add(this.group);

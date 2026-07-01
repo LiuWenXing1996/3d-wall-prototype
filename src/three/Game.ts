@@ -4,6 +4,8 @@ import ThreeSidedGrid from "./ThreeSidedGrid";
 import Floor from "./Floor";
 import Cube from "./Cube";
 import StraightTetromino from "./Tetromino";
+import GameMap from "./GameMap";
+import { GameWorld } from "./GameWorld";
 
 export default class Game {
   // 地图大小: width, depth, height(宽度、深度、高度)
@@ -15,26 +17,22 @@ export default class Game {
   scene: Scene;
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
+  gameWorld: GameWorld;
   // 存储已固定的方块位置 {x,y,z} → true
   private fixedBlocks: Set<string> = new Set();
   // 当前活动方块
-  private currentTetromino: StraightTetromino | null = null;
+  currentTetromino: StraightTetromino | null = null;
   // 下落速度控制（毫秒）
   private dropInterval: number = 1000;
   private lastDropTime: number = 0;
+  // 暂停状态
+  private isPaused: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
     const renderer = new WebGLRenderer({ antialias: true, canvas });
     const scene = new Scene();
     this.scene = scene;
     this.renderer = renderer;
-
-    const width = 750;
-    const height = 1624;
-    // const currentType = CubeGroupTypeEnum.OrangeRicky;
-    // const cubeGroup = new CubeGroup(scene, currentType);
-    // cubeGroup.group.position.set(0, 10, 0);
-
     const camera = new PerspectiveCamera(
       75,
       canvas.clientWidth / canvas.clientHeight,
@@ -42,35 +40,14 @@ export default class Game {
       3000,
     );
     this.camera = camera;
-
     camera.position.set(20, 30, 20);
     camera.lookAt(0, 0, 0);
-    // const axesHelper = new AxesHelper(100);
-    // axesHelper.setColors("red", "green", "blue"); // 设置坐标轴颜色
-
-    // // 2. 将坐标轴添加到场景中
-    // scene.add(axesHelper);
-
-    const floor = new Floor(
-      scene,
-      this.mapSize.width,
-      this.mapSize.depth,
-      this.mapSize.height,
-    );
-    // 生成第一个方块
-    this.spawnTetromino();
-    // const straightTetromino = new StraightTetromino(this);
-
-    // const threeSidedGrid = new ThreeSidedGrid(scene);
-    // threeSidedGrid.group.rotateX(Math.PI / 3);
-    // threeSidedGrid.group.rotateY(Math.PI / 3);
-
-    const cubeGroupList: CubeGroup[] = [];
-    // Object.keys(CubeGroupTypeEnum).forEach((key, index) => {
-    //   const cubeGroupType = key as CubeGroupType;
-    //   const cubeGroup = new CubeGroup(scene, cubeGroupType);
-    //   cubeGroup.group.position.set(index * 2 - 1, index, 0);
-    //   cubeGroupList.push(cubeGroup);
+    this.gameWorld = new GameWorld();
+    scene.add(this.gameWorld);
+    // this.gameMap = new GameMap(this, {
+    //   width: this.mapSize.width,
+    //   depth: this.mapSize.depth,
+    //   height: this.mapSize.height,
     // });
     function resizeRendererToDisplaySize(renderer: WebGLRenderer) {
       const canvas = renderer.domElement;
@@ -91,18 +68,34 @@ export default class Game {
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
       }
-
-      // 方块自动下落逻辑
-      game.update(time);
+      if (!game.isPaused) {
+        // 方块自动下落逻辑
+        game.update(time);
+      }
 
       renderer.render(scene, camera);
     }
     renderer.setAnimationLoop(animate);
   }
+  start() {
+    // 生成第一个方块
+    this.gameWorld.spawnPolyomino();
+  }
+  pause() {
+    this.isPaused = true;
+  }
+  resume() {
+    this.isPaused = false;
+  }
+  isGamePaused(): boolean {
+    return this.isPaused;
+  }
   /**
    * 更新游戏状态
    */
   update(time: number): void {
+    this.gameWorld.update(time);
+
     if (!this.currentTetromino) return;
 
     // 定时下落
@@ -143,25 +136,25 @@ export default class Game {
   }
   hardDrop(): void {
     if (!this.currentTetromino) return;
-    
+
     // 持续向下移动直到无法移动
     while (true) {
       const positions = this.currentTetromino.getWorldPositions();
-      const canMoveDown = !positions.some(pos => {
+      const canMoveDown = !positions.some((pos) => {
         const targetY = pos.y - 1;
         return targetY < 0 || this.isBlocked(pos.x, targetY, pos.z);
       });
-      
+
       if (!canMoveDown) break;
-      
+
       this.currentTetromino.stepMoveY(-1);
     }
-    
+
     // 固定方块
     this.currentTetromino.lock();
     // this.currentTetromino.destroy();
     this.currentTetromino = null;
-    
+
     this.clearLayers();
     this.spawnTetromino();
   }
@@ -183,10 +176,11 @@ export default class Game {
   spawnTetromino() {
     this.currentTetromino = new StraightTetromino(this);
     // 设置初始位置（地图中心顶部）
-    this.currentTetromino.group.position.set(
-      Math.floor(this.mapSize.width / 2) - 1,
-      this.mapSize.height - 1,
-      Math.floor(this.mapSize.depth / 2) - 1,
-    );
+    // this.currentTetromino.group.position.set(
+    //   Math.floor(this.mapSize.width % 2) - 1,
+    //   this.mapSize.height - 1,
+    //   Math.floor(this.mapSize.depth % 2) - 1,
+    // );
+    this.currentTetromino.group.position.set(0, this.mapSize.height - 1, 0);
   }
 }
