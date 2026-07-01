@@ -63,9 +63,9 @@ export const addStraightTetrominoGui = (game: Game) => {
         {
           addTetromino: () => {
             if (!testTetromino) {
-              testTetromino = new Polyomino();
-              testTetromino.position.set(5, 20, 5);
-              game.gameWorld.add(testTetromino);
+              // testTetromino = new Polyomino();
+              // testTetromino.position.set(5, 20, 5);
+              // game.gameBoard.add(testTetromino);
             } else {
             }
           },
@@ -81,7 +81,7 @@ export const addStraightTetrominoGui = (game: Game) => {
         {
           removeTestTetromino: () => {
             if (testTetromino) {
-              game.gameWorld.remove(testTetromino);
+              game.gameBoard.remove(testTetromino);
               testTetromino = null;
             }
           },

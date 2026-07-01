@@ -18,7 +18,7 @@ export default class Polyomino extends Object3D {
     }
   }
   /**
-   * TODO:在 GameWorld 中实现旋转后，删除此方法
+   * TODO:在 GameBoard 中实现旋转后，删除此方法
    * 在指定轴方向上旋转
    * @param x 旋转角度
    * @param y 旋转角度

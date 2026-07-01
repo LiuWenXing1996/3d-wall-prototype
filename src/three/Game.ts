@@ -1,5 +1,5 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from "three";
-import { GameWorld } from "./GameWorld";
+import { GameBoard } from "./GameBoard";
 
 export default class Game {
   // 地图大小: width, depth, height(宽度、深度、高度)
@@ -11,7 +11,7 @@ export default class Game {
   scene: Scene;
   renderer: WebGLRenderer;
   camera: PerspectiveCamera;
-  gameWorld: GameWorld;
+  gameBoard: GameBoard;
   // 存储已固定的方块位置 {x,y,z} → true
   private fixedBlocks: Set<string> = new Set();
   // 暂停状态
@@ -31,8 +31,8 @@ export default class Game {
     this.camera = camera;
     camera.position.set(20, 30, 20);
     camera.lookAt(0, 0, 0);
-    this.gameWorld = new GameWorld();
-    scene.add(this.gameWorld);
+    this.gameBoard = new GameBoard();
+    scene.add(this.gameBoard);
     // this.gameMap = new GameMap(this, {
     //   width: this.mapSize.width,
     //   depth: this.mapSize.depth,
@@ -68,7 +68,7 @@ export default class Game {
   }
   start() {
     // 生成第一个方块
-    this.gameWorld.spawnPolyomino();
+    this.gameBoard.spawnPolyomino();
   }
   pause() {
     this.isPaused = true;
@@ -83,7 +83,7 @@ export default class Game {
    * 更新游戏状态
    */
   update(time: number): void {
-    this.gameWorld.update(time);
+    this.gameBoard.update(time);
   }
 
   // 添加固定方块

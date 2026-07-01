@@ -18,21 +18,16 @@ export default class FixedCubeList extends Object3D {
    * 生成唯一键
    */
   private getKey(x: number, y: number, z: number): string {
-    // TODO: 当前场景旋转后，坐标会改变，会导致键值对不一致
-    // 如果都用本地坐标呢？
-    // 那就是说使用 GameWorld.worldToLocal 将所有的worldPosition=>GameWorldPosition
-    // 这样所有的坐标都统一了。
-    // 已经一致了，但是之前代码太脏乱了，需要重构下
     return `${x},${y},${z}`;
   }
 
   /**
    * 添加一个固定方块
-   * @param gameWorldPosition - 方块的游戏世界位置
+   * @param gameBoardPosition - 方块的棋盘位置
    * @param config - 方块配置项
    */
-  addCube(gameWorldPosition: Vector3, config?: PolyominoCubeConfig): void {
-    const { x, y, z } = gameWorldPosition;
+  addCube(gameBoardPosition: Vector3, config?: PolyominoCubeConfig): void {
+    const { x, y, z } = gameBoardPosition;
     const key = this.getKey(x, y, z);
 
     // 如果位置已存在方块，先移除

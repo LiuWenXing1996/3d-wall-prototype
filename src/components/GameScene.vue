@@ -8,12 +8,12 @@
         <button @click="game?.resume">继续游戏</button>
         <div>方块控制</div>
         <div>
-            <button @click="game?.gameWorld?.stepMoveCurrentPolyominoZ(1)">↙️左下移</button>
-            <button @click="game?.gameWorld?.stepMoveCurrentPolyominoZ(-1)">↗️右上移</button>
-            <button @click="game?.gameWorld?.stepMoveCurrentPolyominoX(-1)">↖️左上移</button>
-            <button @click="game?.gameWorld?.stepMoveCurrentPolyominoX(1)">↘️右下移</button>
-            <button @click="game?.gameWorld?.tryDrop()">⬇️下移</button>
-            <button @click="game?.gameWorld?.stepMoveCurrentPolyominoY(1)">⬆️上移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoZ(1)">↙️左下移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoZ(-1)">↗️右上移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoX(-1)">↖️左上移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoX(1)">↘️右下移</button>
+            <button @click="game?.gameBoard?.tryDrop()">⬇️下移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoY(1)">⬆️上移</button>
         </div>
         <div>
             <button>
@@ -22,8 +22,8 @@
             </button>
         </div>
         <div>整体控制</div>
-        <button @click="game?.gameWorld?.stepRotateOnCenter(1)">左转</button>
-        <button @click="game?.gameWorld?.stepRotateOnCenter(-1)">右转</button>
+        <button @click="game?.gameBoard?.stepRotateOnCenter(1)">左转</button>
+        <button @click="game?.gameBoard?.stepRotateOnCenter(-1)">右转</button>
     </div>
 </template>
 <script setup lang="ts">
