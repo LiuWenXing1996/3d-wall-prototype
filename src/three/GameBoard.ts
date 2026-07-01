@@ -23,7 +23,8 @@ class GameBoardPlane extends Object3D {
     const geometry = new PlaneGeometry(0.9, 0.9);
     const material = new MeshBasicMaterial({
       color,
-      side: DoubleSide,
+      // side: DoubleSide,
+      side,
     });
     const line = new Mesh(geometry, material);
     this.add(line);

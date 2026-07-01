@@ -1,8 +1,7 @@
 import GUI from "lil-gui";
 import type Game from "./Game";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { AxesHelper, GridHelper, Line, LineBasicMaterial } from "three";
-import StraightTetromino from "./Tetromino";
+import { GridHelper } from "three";
 import type { Nullable } from "../types";
 import CustomAxesHelper from "./CustomAxesHelper";
 import Polyomino from "./Polyomino";
@@ -82,7 +81,7 @@ export const addStraightTetrominoGui = (game: Game) => {
         {
           removeTestTetromino: () => {
             if (testTetromino) {
-              testTetromino.destroy();
+              game.gameWorld.remove(testTetromino);
               testTetromino = null;
             }
           },
@@ -91,111 +90,7 @@ export const addStraightTetrominoGui = (game: Game) => {
       )
       .name("移除测试骨牌");
   }
-  // 沿x轴正向移动测试骨牌
-  {
-    folder
-      .add(
-        {
-          movePositiveX: () => {
-            if (testTetromino) {
-              testTetromino.stepMoveX(1);
-            }
-          },
-        },
-        "movePositiveX",
-      )
-      .name("沿x轴正向移动测试骨牌");
-  }
-  // 沿x轴负向移动测试骨牌
-  {
-    folder
-      .add(
-        {
-          moveNegativeX: () => {
-            if (testTetromino) {
-              testTetromino.stepMoveX(-1);
-            }
-          },
-        },
-        "moveNegativeX",
-      )
-      .name("沿x轴负向移动测试骨牌");
-  }
-  // 沿y轴正向移动测试骨牌
-  {
-    folder
-      .add(
-        {
-          movePositiveY: () => {
-            if (testTetromino) {
-              testTetromino.stepMoveY(1);
-            }
-          },
-        },
-        "movePositiveY",
-      )
-      .name("沿y轴正向移动测试骨牌");
-  }
-  // 沿y轴负向移动测试骨牌
-  {
-    folder
-      .add(
-        {
-          moveNegativeY: () => {
-            if (testTetromino) {
-              testTetromino.stepMoveY(-1);
-            }
-          },
-        },
-        "moveNegativeY",
-      )
-      .name("沿y轴负向移动测试骨牌");
-  }
-  // 沿z轴正向移动测试骨牌
-  {
-    folder
-      .add(
-        {
-          movePositiveZ: () => {
-            if (testTetromino) {
-              testTetromino.stepMoveZ(1);
-            }
-          },
-        },
-        "movePositiveZ",
-      )
-      .name("沿z轴正向移动测试骨牌");
-  }
-  // 沿z轴负向移动测试骨牌
-  {
-    folder
-      .add(
-        {
-          moveNegativeZ: () => {
-            if (testTetromino) {
-              testTetromino.stepMoveZ(-1);
-            }
-          },
-        },
-        "moveNegativeZ",
-      )
-      .name("沿z轴负向移动测试骨牌");
-  }
-  // 沿x轴旋转测试骨牌
-  {
-    folder
-      .add(
-        {
-          rotateX: () => {
-            if (testTetromino) {
-              testTetromino.stepRotateX(1);
-            }
-          },
-        },
-        "rotateX",
-      )
-      .name("沿x轴旋转测试骨牌");
-  }
+
   // 沿y轴旋转测试骨牌
   {
     folder
@@ -240,36 +135,6 @@ export const addStraightTetrominoGui = (game: Game) => {
         "logPosition",
       )
       .name("打印测试骨牌位置");
-  }
-  // 计算测试骨牌边界
-  {
-    folder
-      .add(
-        {
-          calculateBoundary: () => {
-            if (testTetromino) {
-              testTetromino.calculateBoundary();
-            }
-          },
-        },
-        "calculateBoundary",
-      )
-      .name("计算测试骨牌边界");
-  }
-  // 显示测试骨牌边界
-  {
-    folder
-      .add(
-        {
-          showBoundary: () => {
-            if (testTetromino) {
-              testTetromino.showBoundary();
-            }
-          },
-        },
-        "showBoundary",
-      )
-      .name("显示测试骨牌边界");
   }
 };
 

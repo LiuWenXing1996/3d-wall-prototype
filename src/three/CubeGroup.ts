@@ -1,6 +1,7 @@
 import { Group, Scene } from "three";
 import Cube from "./Cube";
 
+// TODO:待删除，把 cubeGroup 全部替换为 Polyomino后就可以删除了
 /**
  * 立方体组
  */

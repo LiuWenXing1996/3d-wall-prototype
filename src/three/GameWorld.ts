@@ -4,7 +4,7 @@ import Polyomino from "./Polyomino";
 import type { Nullable } from "../types";
 import { cloneDeep } from "es-toolkit";
 import FixedCubeList from "./FixedCubeList";
-
+// TODO:尝试编写单元测试案例，测试GameWorld类的功能，包括下落、碰撞检测、固定方块等
 export class GameWorld extends Object3D {
   worldSize: { width: number; depth: number; height: number } = {
     width: 10,
@@ -15,9 +15,6 @@ export class GameWorld extends Object3D {
   private lastDropTime: number = 0; // 上次下落时间（毫秒）
   private dropInterval: number = 1000; // 下落间隔（毫秒），默认1秒下落一格
   fixedCubeList: FixedCubeList;
-  // 包裹组，用于旋转世界
-  //   private wrapperGroup: Group;
-
   constructor() {
     super();
     const gameBoard = new GameBoard({
@@ -26,7 +23,7 @@ export class GameWorld extends Object3D {
       height: this.worldSize.height,
     });
     this.add(gameBoard);
-    this.fixedCubeList = new FixedCubeList(this.worldSize);
+    this.fixedCubeList = new FixedCubeList();
     this.add(this.fixedCubeList);
   }
 
@@ -53,13 +50,13 @@ export class GameWorld extends Object3D {
     // 检查是否可以下落（检测碰撞）
     const predictedBlockPositions = this.currentPolyomino.cubeList.map(
       (block) => {
-        const worldPos = block.getGameWorldPosition();
-        return new Vector3(worldPos.x + 0, worldPos.y + -1, worldPos.z + 0);
+        const worldPos = block.getWorldPosition(new Vector3());
+        const predictedWorldPos = worldPos.clone().add(new Vector3(0, -1, 0));
+        return predictedWorldPos;
       },
     );
-    // TODO：要转成游戏世界坐标
     if (
-      predictedBlockPositions.some((position) => this.checkCollision2(position))
+      predictedBlockPositions.some((position) => this.checkCollision(position))
     ) {
       // 发生碰撞，无法下落
       this.lockPolyomino();
@@ -68,7 +65,7 @@ export class GameWorld extends Object3D {
       this.currentPolyomino.position.y = this.currentPolyomino.position.y - 1;
     }
   }
-  checkCollision2(worldPosition: Vector3): boolean {
+  checkCollision(worldPosition: Vector3): boolean {
     const { x, y, z } = this.worldPositionToGameWorldPosition(worldPosition);
     // 边界检测
     if (x < 0 || x >= this.worldSize.width) return true;
@@ -87,16 +84,6 @@ export class GameWorld extends Object3D {
     const intZ = toInt(localPosition.z);
     const intPosition = new Vector3(intX, intY, intZ);
     return intPosition;
-  }
-  checkCollision(x: number, y: number, z: number): boolean {
-    // 边界检测
-    if (x < 0 || x >= this.worldSize.width) return true;
-    if (y < 0) return true; // Y轴向下无限（高度方向）
-    if (z < 0 || z >= this.worldSize.depth) return true;
-
-    // 与已固定方块的碰撞检测
-    if (this.fixedCubeList.isBlocked(x, y, z)) return true;
-    return false;
   }
   /**
    * 固定当前方块到游戏板
@@ -171,40 +158,34 @@ export class GameWorld extends Object3D {
    */
   stepMoveCurrentPolyomino(x: number, y: number, z: number) {
     if (!this.currentPolyomino) return false;
-    const oldLocalPosition = this.currentPolyomino.position.clone();
-    console.log("currentPolyomino旧本地位置:", oldLocalPosition.toArray());
-    const oldWorldPosition = this.currentPolyomino
-      .getGameWorldPosition()
-      .clone();
-    console.log("currentPolyomino旧世界位置:", oldWorldPosition.toArray());
-    const newPosition = new Vector3(
-      oldWorldPosition.x + (x || 0),
-      oldWorldPosition.y + (y || 0),
-      oldWorldPosition.z + (z || 0),
-    );
-    // 世界位置转本地位置
-    const newLocalPosition = this.worldToLocal(newPosition.clone());
-    console.log("currentPolyomino新本地位置:", newLocalPosition.toArray());
-
-    const predictedBlockPositions = this.currentPolyomino.cubeList.map(
+    // 预测骨牌中所有方块的世界位置
+    const predictedCubePositions = this.currentPolyomino.cubeList.map(
       (block) => {
-        const worldPos = block.getGameWorldPosition();
-        console.log("cube旧世界位置:", worldPos.toArray());
-        return new Vector3(worldPos.x + x, worldPos.y + y, worldPos.z + z);
+        const worldPos = block.getWorldPosition(new Vector3());
+        const predictedWorldPos = worldPos.clone().add(new Vector3(x, y, z));
+        return predictedWorldPos;
       },
     );
-    console.log(
-      "cube预测位置:",
-      predictedBlockPositions.map((position) => position),
-    );
     if (
-      predictedBlockPositions.some((position) => this.checkCollision2(position))
+      predictedCubePositions.some((position) => this.checkCollision(position))
     ) {
       // 发生碰撞，无法移动
       return;
     }
-    // 移动
-    this.currentPolyomino.position.copy(newLocalPosition);
+    // 整体移动骨牌，而不是每个方块单独移动
+    // 获取当前骨牌的世界位置
+    const oldWorldPosition = this.currentPolyomino.getWorldPosition(
+      new Vector3(),
+    );
+    // 预测骨牌新的世界位置
+    const predictedWorldPosition = oldWorldPosition
+      .clone()
+      .add(new Vector3(x, y, z));
+    // 骨牌的世界位置转游戏位置
+    const newGamePosition = this.worldPositionToGameWorldPosition(
+      predictedWorldPosition.clone(),
+    );
+    this.currentPolyomino.position.copy(newGamePosition);
   }
   /**
    * 在x轴方向上移动
@@ -226,20 +207,5 @@ export class GameWorld extends Object3D {
    */
   stepMoveCurrentPolyominoZ(step: number) {
     this.stepMoveCurrentPolyomino(0, 0, step);
-  }
-  /**
-   * 将全局世界坐标转换为游戏世界坐标
-   * @param x 全局世界坐标x轴
-   * @param y 全局世界坐标y轴
-   * @param z 全局世界坐标z轴
-   * @returns 游戏世界坐标
-   */
-  transformToGameWorldPosition(x: number, y: number, z: number): Vector3 {
-    const toInt = (val: number) => Math.round(val);
-    const intX = toInt(Number(x) ?? 0);
-    const intY = toInt(Number(y) ?? 0);
-    const intZ = toInt(Number(z) ?? 0);
-    const position = this.worldToLocal(new Vector3(intX, intY, intZ));
-    return position;
   }
 }

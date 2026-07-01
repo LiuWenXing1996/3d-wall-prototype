@@ -16,7 +16,7 @@
             <button @click="game?.gameWorld?.stepMoveCurrentPolyominoY(1)">⬆️上移</button>
         </div>
         <div>
-            <button @click="game?.currentTetromino?.rotate(-1)">
+            <button>
                 <img :src="rotateImg" class="base" width="30" height="30" alt="" />
                 <span>竖直-右旋</span>
             </button>
