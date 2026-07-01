@@ -1,6 +1,6 @@
-import { Group, Matrix4, Object3D, Vector3 } from "three";
+import { Matrix4, Object3D, Vector3 } from "three";
 import GameBoard from "./GameBoard";
-import Polyomino from "./Polyomino";
+import Polyomino, { PolyominoTypeEnum, type PolyominoType } from "./Polyomino";
 import type { Nullable } from "../types";
 import { cloneDeep } from "es-toolkit";
 import FixedCubeList from "./FixedCubeList";
@@ -104,17 +104,13 @@ export class GameWorld extends Object3D {
     // TODO: 检测并清除完整的层（俄罗斯方块逻辑）
     // this.clearFullLayers();
   }
-
-  /**
-   * 生成新方块
-   */
-  spawnPolyomino() {
+  spawnPolyominoByType(type: PolyominoType) {
     // 移除旧的方块
     if (this.currentPolyomino) {
       this.remove(this.currentPolyomino);
     }
     // 生成新方块
-    this.currentPolyomino = new Polyomino();
+    this.currentPolyomino = new Polyomino(type);
     this.add(this.currentPolyomino);
     // 设置初始位置（地图中心顶部）
     this.currentPolyomino.position.set(
@@ -122,6 +118,18 @@ export class GameWorld extends Object3D {
       this.worldSize.height - 1,
       Math.floor(this.worldSize.depth / 2) - 1,
     );
+  }
+  /**
+   * 生成新方块
+   */
+  spawnPolyomino() {
+    // 随机选择一个方块类型
+    const type =
+      Object.values(PolyominoTypeEnum)[
+        Math.floor(Math.random() * Object.values(PolyominoTypeEnum).length)
+      ];
+      console.log(type);
+    this.spawnPolyominoByType(type);
   }
   /**
    * 绕中心旋转游戏世界
@@ -158,7 +166,7 @@ export class GameWorld extends Object3D {
    */
   stepMoveCurrentPolyomino(x: number, y: number, z: number) {
     if (!this.currentPolyomino) return false;
-    // 预测骨牌中所有方块的世界位置
+    // 预测连块中所有方块的世界位置
     const predictedCubePositions = this.currentPolyomino.cubeList.map(
       (block) => {
         const worldPos = block.getWorldPosition(new Vector3());
@@ -172,16 +180,16 @@ export class GameWorld extends Object3D {
       // 发生碰撞，无法移动
       return;
     }
-    // 整体移动骨牌，而不是每个方块单独移动
-    // 获取当前骨牌的世界位置
+    // 整体移动连块，而不是每个方块单独移动
+    // 获取当前连块的世界位置
     const oldWorldPosition = this.currentPolyomino.getWorldPosition(
       new Vector3(),
     );
-    // 预测骨牌新的世界位置
+    // 预测连块新的世界位置
     const predictedWorldPosition = oldWorldPosition
       .clone()
       .add(new Vector3(x, y, z));
-    // 骨牌的世界位置转游戏位置
+    // 连块的世界位置转游戏位置
     const newGamePosition = this.worldPositionToGameWorldPosition(
       predictedWorldPosition.clone(),
     );

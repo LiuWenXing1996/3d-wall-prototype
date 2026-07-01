@@ -18,7 +18,7 @@ export interface PolyominoCubeConfig {
   lineColor?: ColorRepresentation;
 }
 /**
- * 多格骨牌单个立方体，一个带边缘高亮的立方体网格对象，大小为 1x1x1
+ * 多格连块单个立方体，一个带边缘高亮的立方体网格对象，大小为 1x1x1
  */
 export default class PolyominoCube extends Object3D {
   public readonly config: Readonly<PolyominoCubeConfig>;

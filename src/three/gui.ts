@@ -54,9 +54,9 @@ export const addDevGui = (game: Game) => {
   }
 };
 export const addStraightTetrominoGui = (game: Game) => {
-  const folder = gui.addFolder("直线骨牌");
+  const folder = gui.addFolder("直线连块");
   let testTetromino: Nullable<Polyomino> = null;
-  // 添加一个测试直线骨牌
+  // 添加一个测试直线连块
   {
     folder
       .add(
@@ -72,9 +72,9 @@ export const addStraightTetrominoGui = (game: Game) => {
         },
         "addTetromino",
       )
-      .name("添加测试骨牌");
+      .name("添加测试连块");
   }
-  // 移除测试骨牌
+  // 移除测试连块
   {
     folder
       .add(
@@ -88,10 +88,10 @@ export const addStraightTetrominoGui = (game: Game) => {
         },
         "removeTestTetromino",
       )
-      .name("移除测试骨牌");
+      .name("移除测试连块");
   }
 
-  // 沿y轴旋转测试骨牌
+  // 沿y轴旋转测试连块
   {
     folder
       .add(
@@ -104,9 +104,9 @@ export const addStraightTetrominoGui = (game: Game) => {
         },
         "rotateY",
       )
-      .name("沿y轴旋转测试骨牌");
+      .name("沿y轴旋转测试连块");
   }
-  // 沿z轴旋转测试骨牌
+  // 沿z轴旋转测试连块
   {
     folder
       .add(
@@ -119,9 +119,9 @@ export const addStraightTetrominoGui = (game: Game) => {
         },
         "rotateZ",
       )
-      .name("沿z轴旋转测试骨牌");
+      .name("沿z轴旋转测试连块");
   }
-  // 打印测试骨牌位置
+  // 打印测试连块位置
   {
     folder
       .add(
@@ -134,7 +134,7 @@ export const addStraightTetrominoGui = (game: Game) => {
         },
         "logPosition",
       )
-      .name("打印测试骨牌位置");
+      .name("打印测试连块位置");
   }
 };
 
