@@ -12,6 +12,8 @@
             <button @click="game?.gameWorld?.stepMoveCurrentPolyominoZ(-1)">↗️右上移</button>
             <button @click="game?.gameWorld?.stepMoveCurrentPolyominoX(-1)">↖️左上移</button>
             <button @click="game?.gameWorld?.stepMoveCurrentPolyominoX(1)">↘️右下移</button>
+            <button @click="game?.gameWorld?.tryDrop()">⬇️下移</button>
+            <button @click="game?.gameWorld?.stepMoveCurrentPolyominoY(1)">⬆️上移</button>
         </div>
         <div>
             <button @click="game?.currentTetromino?.rotate(-1)">

@@ -1,5 +1,6 @@
 import { Object3D } from "three";
 import PolyominoCube, { type PolyominoCubeConfig } from "./PolyominoCube";
+import type GameWorldPosition from "./GameWorldPosition";
 
 /**
  * 已固定方块列表，负责管理和渲染所有已经固定到游戏板上的方块
@@ -39,7 +40,9 @@ export default class FixedCubeList extends Object3D {
    * @param z Z坐标
    * @param color 方块颜色
    */
-  addCube(x: number, y: number, z: number, config?: PolyominoCubeConfig): void {
+  addCube(position: GameWorldPosition, config?: PolyominoCubeConfig): void {
+    const { x, y, z } = position;
+
     // 边界检查
     if (!this.isInBounds(x, y, z)) return;
 

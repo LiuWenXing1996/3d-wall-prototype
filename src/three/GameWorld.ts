@@ -39,7 +39,7 @@ export class GameWorld extends Object3D {
 
     // 检查是否需要下落
     if (time - this.lastDropTime >= this.dropInterval) {
-        this.tryDrop(); // 尝试下落
+      // this.tryDrop(); // 尝试下落
       this.lastDropTime = time;
     }
   }
@@ -47,24 +47,19 @@ export class GameWorld extends Object3D {
   /**
    * 尝试让当前方块下落一格
    */
-  private tryDrop() {
+  public tryDrop() {
     if (!this.currentPolyomino) return;
 
     // 检查是否可以下落（检测碰撞）
     const predictedBlockPositions = this.currentPolyomino.cubeList.map(
       (block) => {
         const worldPos = block.getGameWorldPosition();
-        return {
-          x: worldPos.x + 0,
-          y: worldPos.y + -1,
-          z: worldPos.z + 0,
-        };
+        return new Vector3(worldPos.x + 0, worldPos.y + -1, worldPos.z + 0);
       },
     );
+    // TODO：要转成游戏世界坐标
     if (
-      predictedBlockPositions.some((position) =>
-        this.checkCollision(position.x, position.y, position.z),
-      )
+      predictedBlockPositions.some((position) => this.checkCollision2(position))
     ) {
       // 发生碰撞，无法下落
       this.lockPolyomino();
@@ -72,6 +67,26 @@ export class GameWorld extends Object3D {
     } else {
       this.currentPolyomino.position.y = this.currentPolyomino.position.y - 1;
     }
+  }
+  checkCollision2(worldPosition: Vector3): boolean {
+    const { x, y, z } = this.worldPositionToGameWorldPosition(worldPosition);
+    // 边界检测
+    if (x < 0 || x >= this.worldSize.width) return true;
+    if (y < 0) return true; // Y轴向下无限（高度方向）
+    if (z < 0 || z >= this.worldSize.depth) return true;
+
+    // 与已固定方块的碰撞检测
+    if (this.fixedCubeList.isBlocked(x, y, z)) return true;
+    return false;
+  }
+  worldPositionToGameWorldPosition(worldPosition: Vector3): Vector3 {
+    const localPosition = this.worldToLocal(worldPosition.clone());
+    const toInt = (val: number) => Math.round(val);
+    const intX = toInt(localPosition.x);
+    const intY = toInt(localPosition.y);
+    const intZ = toInt(localPosition.z);
+    const intPosition = new Vector3(intX, intY, intZ);
+    return intPosition;
   }
   checkCollision(x: number, y: number, z: number): boolean {
     // 边界检测
@@ -88,20 +103,15 @@ export class GameWorld extends Object3D {
    */
   private lockPolyomino(): void {
     if (!this.currentPolyomino) return;
-    const currentPolyominoPosition = this.currentPolyomino.position.clone();
     const cubeList = this.currentPolyomino.cubeList.map((cube) => {
+      const worldPosition = cube.getWorldPosition(new Vector3());
       return {
         config: cloneDeep(cube.config),
-        position: cube.position.clone().add(currentPolyominoPosition),
+        position: this.worldPositionToGameWorldPosition(worldPosition),
       };
     });
     cubeList.forEach((cube) => {
-      this.fixedCubeList.addCube(
-        cube.position.x,
-        cube.position.y,
-        cube.position.z,
-        cube.config,
-      );
+      this.fixedCubeList.addCube(cube.position, cube.config);
     });
 
     // TODO: 检测并清除完整的层（俄罗斯方块逻辑）
@@ -180,11 +190,7 @@ export class GameWorld extends Object3D {
       (block) => {
         const worldPos = block.getGameWorldPosition();
         console.log("cube旧世界位置:", worldPos.toArray());
-        return {
-          x: worldPos.x + x,
-          y: worldPos.y + y,
-          z: worldPos.z + z,
-        };
+        return new Vector3(worldPos.x + x, worldPos.y + y, worldPos.z + z);
       },
     );
     console.log(
@@ -192,9 +198,7 @@ export class GameWorld extends Object3D {
       predictedBlockPositions.map((position) => position),
     );
     if (
-      predictedBlockPositions.some((position) =>
-        this.checkCollision(position.x, position.y, position.z),
-      )
+      predictedBlockPositions.some((position) => this.checkCollision2(position))
     ) {
       // 发生碰撞，无法移动
       return;
@@ -222,5 +226,20 @@ export class GameWorld extends Object3D {
    */
   stepMoveCurrentPolyominoZ(step: number) {
     this.stepMoveCurrentPolyomino(0, 0, step);
+  }
+  /**
+   * 将全局世界坐标转换为游戏世界坐标
+   * @param x 全局世界坐标x轴
+   * @param y 全局世界坐标y轴
+   * @param z 全局世界坐标z轴
+   * @returns 游戏世界坐标
+   */
+  transformToGameWorldPosition(x: number, y: number, z: number): Vector3 {
+    const toInt = (val: number) => Math.round(val);
+    const intX = toInt(Number(x) ?? 0);
+    const intY = toInt(Number(y) ?? 0);
+    const intZ = toInt(Number(z) ?? 0);
+    const position = this.worldToLocal(new Vector3(intX, intY, intZ));
+    return position;
   }
 }

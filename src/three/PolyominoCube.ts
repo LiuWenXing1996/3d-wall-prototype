@@ -9,6 +9,7 @@ import {
   Vector3,
   type ColorRepresentation,
 } from "three";
+import GameWorldPosition from "./GameWorldPosition";
 /**
  * PolyominoCube 配置类型
  */
@@ -43,11 +44,11 @@ export default class PolyominoCube extends Object3D {
   }
   getGameWorldPosition() {
     const worldPosition = this.getWorldPosition(new Vector3());
-    const intWorldPosition = new Vector3(
-      Number(worldPosition.x.toFixed(2)),
-      Number(worldPosition.y.toFixed(2)),
-      Number(worldPosition.z.toFixed(2)),
+    const gameWorldPosition = new GameWorldPosition(
+      worldPosition.x,
+      worldPosition.y,
+      worldPosition.z,
     );
-    return intWorldPosition;
+    return gameWorldPosition;
   }
 }

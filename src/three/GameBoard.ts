@@ -1,4 +1,5 @@
 import {
+  DoubleSide,
   FrontSide,
   Mesh,
   MeshBasicMaterial,
@@ -22,7 +23,7 @@ class GameBoardPlane extends Object3D {
     const geometry = new PlaneGeometry(0.9, 0.9);
     const material = new MeshBasicMaterial({
       color,
-      side,
+      side: DoubleSide,
     });
     const line = new Mesh(geometry, material);
     this.add(line);
