@@ -1,6 +1,24 @@
 <template>
     <canvas class="game-canvas" ref="canvas"></canvas>
-    <!-- <div ref="container"></div> -->
+    <div class="ui-controller">
+        <div>游戏控制</div>
+        <button @click="game?.start">开始游戏</button>
+        <button @click="game?.pause">暂停游戏</button>
+        <button @click="game?.resume">继续游戏</button>
+        <div>方块控制</div>
+        <div>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoZ(1)">↙️左下移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoZ(-1)">↗️右上移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoX(-1)">↖️左上移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoX(1)">↘️右下移</button>
+            <button @click="game?.gameBoard?.tryDrop()">⬇️下移</button>
+            <button @click="game?.gameBoard?.stepMoveCurrentPolyominoY(1)">⬆️上移</button>
+        </div>
+        <div>整体控制</div>
+        <button @click="game?.gameBoard?.stepRotateOnCenter(1)">左转</button>
+        <button @click="game?.gameBoard?.stepRotateOnCenter(-1)">右转</button>
+        <button @click="game?.gameBoard?.hardDrop()">硬降</button>
+    </div>
 </template>
 <script setup lang="ts">
 import { onMounted, ref, shallowRef } from 'vue';
@@ -21,5 +39,12 @@ onMounted(() => {
     width: 100%;
     height: 100%;
     display: block;
+}
+
+.ui-controller {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
 }
 </style>

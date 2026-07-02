@@ -6,9 +6,9 @@ import CustomAxesHelper from "./CustomAxesHelper";
 import { PolyominoTypeEnum } from "./Polyomino";
 const gui = new GUI({
   title: "开发测试",
-  // closeFolders: true,
+  closeFolders: true,
 });
-gui.domElement.style.height = "500px";
+gui.domElement.style.maxHeight = "500px";
 /**
  * 添加开发用的gui
  * @param game 游戏实例

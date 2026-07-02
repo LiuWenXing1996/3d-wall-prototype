@@ -281,4 +281,40 @@ export class GameBoard extends Object3D {
       z: step,
     });
   }
+  // TODO:实现软降
+  hardDrop() {
+    if (!this.currentPolyomino) return;
+
+    let dropDistance = 0;
+    // 使用最大高度作为循环上限，防止死循环
+    const maxDropDistance = this.worldSize.height;
+
+    while (dropDistance < maxDropDistance) {
+      // 预测下落 dropDistance + 1 格后的位置
+      const predictedBlockPositions = this.currentPolyomino.cubeList.map(
+        (block) => {
+          const worldPos = block.getWorldPosition(new Vector3());
+          return worldPos.clone().add(new Vector3(0, -(dropDistance + 1), 0));
+        },
+      );
+
+      // 检查是否会发生碰撞
+      if (
+        predictedBlockPositions.some((position) =>
+          this.checkCollision(position),
+        )
+      ) {
+        break; // 发生碰撞，停止下落
+      }
+
+      dropDistance++;
+    }
+
+    // 直接移动到最终位置
+    this.currentPolyomino.position.y -= dropDistance;
+
+    // 锁定方块并生成新方块
+    this.lockPolyomino();
+    this.spawnPolyomino();
+  }
 }
