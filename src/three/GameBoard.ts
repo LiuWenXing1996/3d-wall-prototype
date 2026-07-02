@@ -6,6 +6,7 @@ import FixedCubeList from "./FixedCubeList";
 import GameBoardFloor from "./GameBoardFloor";
 import GameBoardWall from "./GameBoardWall";
 import PolyominoRotator from "./PolyominoRotator";
+import PolyominoGhost from "./PolyominoGhost";
 // TODO:尝试编写单元测试案例，测试GameBoard类的功能，包括下落、碰撞检测、固定方块等
 export class GameBoard extends Object3D {
   worldSize: { width: number; depth: number; height: number } = {
@@ -18,6 +19,8 @@ export class GameBoard extends Object3D {
   private lastDropTime: number = 0; // 上次下落时间（毫秒）
   private dropInterval: number = 1000; // 下落间隔（毫秒），默认1秒下落一格
   fixedCubeList: FixedCubeList;
+  private ghost: PolyominoGhost;
+  private enableAutoDrop: boolean = true;
   constructor() {
     super();
     this.polyominoRotator = new PolyominoRotator(this);
@@ -38,6 +41,8 @@ export class GameBoard extends Object3D {
     // 创建已固定方块列表
     this.fixedCubeList = new FixedCubeList();
     this.add(this.fixedCubeList);
+    this.ghost = new PolyominoGhost();
+    this.add(this.ghost);
   }
 
   /**
@@ -49,9 +54,20 @@ export class GameBoard extends Object3D {
 
     // 检查是否需要下落
     if (time - this.lastDropTime >= this.dropInterval) {
-      // this.tryDrop(); // 尝试下落
+      // 检查是否开启自动下落
+      if (this.enableAutoDrop) {
+        this.tryDrop(); // 尝试下落
+      }
       this.lastDropTime = time;
     }
+    this.ghost.update(this, this.currentPolyomino);
+  }
+  /**
+   * 开启或关闭自动下落
+   * @param enable 是否开启自动下落
+   */
+  public setEnableAutoDrop(enable: boolean) {
+    this.enableAutoDrop = enable;
   }
 
   /**
@@ -137,6 +153,7 @@ export class GameBoard extends Object3D {
       this.worldSize.height - 1,
       Math.floor(this.worldSize.depth / 2) - 1,
     );
+    this.ghost.clear();
   }
   /**
    * 生成新方块

@@ -96,6 +96,32 @@ export const addGameGui = (game: Game) => {
       )
       .name("继续游戏");
   }
+  // 关闭自由下落
+  {
+    folder
+      .add(
+        {
+          disableAutoDrop: () => {
+            game.gameBoard.setEnableAutoDrop(false);
+          },
+        },
+        "disableAutoDrop",
+      )
+      .name("关闭自由下落");
+  }
+  // 开启自由下落
+  {
+    folder
+      .add(
+        {
+          enableAutoDrop: () => {
+            game.gameBoard.setEnableAutoDrop(true);
+          },
+        },
+        "enableAutoDrop",
+      )
+      .name("开启自由下落");
+  }
 };
 export const addBoardGui = (game: Game) => {
   const folder = gui.addFolder("棋盘调试");
