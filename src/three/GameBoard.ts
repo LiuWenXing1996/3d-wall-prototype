@@ -1,4 +1,4 @@
-import { Euler, Matrix4, Object3D, Quaternion, Vector3 } from "three";
+import { Matrix4, Object3D, Vector3 } from "three";
 import Polyomino, { PolyominoTypeEnum, type PolyominoType } from "./Polyomino";
 import type { Nullable } from "../types";
 import { cloneDeep } from "es-toolkit";

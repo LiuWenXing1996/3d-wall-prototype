@@ -2,15 +2,13 @@ import GUI from "lil-gui";
 import type Game from "./Game";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { GridHelper } from "three";
-import type { Nullable } from "../types";
 import CustomAxesHelper from "./CustomAxesHelper";
-import Polyomino, { PolyominoTypeEnum } from "./Polyomino";
+import { PolyominoTypeEnum } from "./Polyomino";
 const gui = new GUI({
   title: "开发测试",
   // closeFolders: true,
 });
 gui.domElement.style.height = "500px";
-// TODO:将一些测试按钮添加到gui中
 /**
  * 添加开发用的gui
  * @param game 游戏实例

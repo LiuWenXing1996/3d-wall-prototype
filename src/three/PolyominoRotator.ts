@@ -22,7 +22,19 @@ export default class PolyominoRotator {
    */
   rotate(polyomino: Polyomino, angle: { x?: number; y?: number; z?: number }) {
     const newQuat = this.calculateRotationQuaternion(polyomino, angle);
-    // TODO: 检查是否发生碰撞
+    const predictedRotateCubeList = this.predictedRotateCubeList(
+      polyomino,
+      angle,
+    );
+    if (
+      predictedRotateCubeList.some((item) => {
+        const { position } = item;
+        return this.gameBoard.checkCollision(position);
+      })
+    ) {
+      // 发生碰撞，无法旋转
+      return;
+    }
     polyomino.quaternion.copy(newQuat);
   }
   /**
