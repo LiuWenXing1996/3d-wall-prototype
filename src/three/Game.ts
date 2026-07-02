@@ -29,15 +29,11 @@ export default class Game {
       3000,
     );
     this.camera = camera;
-    camera.position.set(20, 30, 20);
-    camera.lookAt(0, 0, 0);
+    camera.position.set(10, 20, 10);
+    // camera.lookAt(5, 5, 5);
     this.gameBoard = new GameBoard();
     scene.add(this.gameBoard);
-    // this.gameMap = new GameMap(this, {
-    //   width: this.mapSize.width,
-    //   depth: this.mapSize.depth,
-    //   height: this.mapSize.height,
-    // });
+
     function resizeRendererToDisplaySize(renderer: WebGLRenderer) {
       const canvas = renderer.domElement;
       const pixelRatio = window.devicePixelRatio;

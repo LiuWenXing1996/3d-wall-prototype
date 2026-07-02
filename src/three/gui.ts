@@ -1,7 +1,7 @@
 import GUI from "lil-gui";
 import type Game from "./Game";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { GridHelper } from "three";
+import { GridHelper, Vector3 } from "three";
 import CustomAxesHelper from "./CustomAxesHelper";
 import { PolyominoTypeEnum } from "./Polyomino";
 const gui = new GUI({
@@ -256,10 +256,46 @@ export const addPolyominoGui = (game: Game) => {
     });
   }
 };
+export const addFixedCubeListGui = (game: Game) => {
+  const folder = gui.addFolder("固定方块调试");
+  // 添加固定方块
+  {
+    folder
+      .add(
+        {
+          addFixedBlock: () => {
+            game.gameBoard.fixedCubeList.clear();
+            for (let x = 0; x < game.gameBoard.worldSize.width; x++) {
+              for (let y = 0; y < game.gameBoard.worldSize.height; y++) {
+                for (let z = 0; z < game.gameBoard.worldSize.depth; z++) {
+                  if (y == 1) {
+                    continue;
+                  }
+                  if (y >= 3) {
+                    continue;
+                  }
+                  if (z === 0 && x === 5) {
+                    continue;
+                  }
+
+                  game.gameBoard.fixedCubeList.addCube(new Vector3(x, y, z), {
+                    boxColor: "#2224b8",
+                  });
+                }
+              }
+            }
+          },
+        },
+        "addFixedBlock",
+      )
+      .name("添加固定方块");
+  }
+};
 
 export const initGui = (game: Game) => {
   addSceneGui(game);
   addGameGui(game);
   addBoardGui(game);
   addPolyominoGui(game);
+  addFixedCubeListGui(game);
 };

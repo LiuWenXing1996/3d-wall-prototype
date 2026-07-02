@@ -1,5 +1,6 @@
 import { Matrix4, Object3D, Vector3 } from "three";
 import Polyomino, { PolyominoTypeEnum, type PolyominoType } from "./Polyomino";
+import type { PolyominoCubeConfig } from "./PolyominoCube";
 import type { Nullable } from "../types";
 import { cloneDeep } from "es-toolkit";
 import FixedCubeList from "./FixedCubeList";
@@ -10,9 +11,9 @@ import PolyominoGhost from "./PolyominoGhost";
 // TODO:尝试编写单元测试案例，测试GameBoard类的功能，包括下落、碰撞检测、固定方块等
 export class GameBoard extends Object3D {
   worldSize: { width: number; depth: number; height: number } = {
-    width: 10,
-    depth: 10,
-    height: 20,
+    width: 6,
+    depth: 6,
+    height: 15,
   };
   currentPolyomino: Nullable<Polyomino> = null;
   polyominoRotator: PolyominoRotator;
@@ -136,9 +137,102 @@ export class GameBoard extends Object3D {
       this.fixedCubeList.addCube(cube.position, cube.config);
     });
 
-    // TODO: 检测并清除完整的层（俄罗斯方块逻辑）
-    // this.clearFullLayers();
+    // 检测并清除完整的层
+    this.clearFullLayers();
   }
+
+  /**
+   * 检测并清除完整的水平层
+   * 使用 while 循环确保多层同时消除时不会遗漏
+   */
+  private clearFullLayers(): void {
+    let occupiedLayers = this.fixedCubeList.getOccupiedLayers();
+    let index = 0;
+
+    while (index < occupiedLayers.length) {
+      // 获取当前层
+      const y = occupiedLayers[index];
+
+      // 检查该层是否完整
+      if (
+        this.fixedCubeList.isLayerComplete(
+          y,
+          this.worldSize.width,
+          this.worldSize.depth,
+        )
+      ) {
+        // 移除该层所有方块
+        this.removeLayer(y);
+
+        // 上层方块下落一层
+        this.dropAboveLayers(y);
+
+        // 重新获取已占用的层列表（因为可能有新的完整层形成）
+        occupiedLayers = this.fixedCubeList.getOccupiedLayers();
+
+        // 重置索引，从最高层重新检查（因为下落可能导致新的完整层）
+        index = 0;
+      } else {
+        // 当前层不完整，检查下一层
+        index++;
+      }
+    }
+  }
+
+  /**
+   * 移除指定Y层的所有方块
+   * @param y Y坐标
+   */
+  private removeLayer(y: number): void {
+    const keys = this.fixedCubeList.getLayerKeys(y);
+    for (const key of keys) {
+      const [x, _, z] = key.split(',').map(Number);
+      this.fixedCubeList.removeCube(x, y, z);
+    }
+  }
+
+  /**
+   * 将指定Y层以上的所有方块下落一层
+   * @param startY 起始Y坐标（不包含）
+   */
+  private dropAboveLayers(startY: number): void {
+    // 获取需要移动的方块（Y > startY）
+    const cubesToMove: {
+      x: number;
+      y: number;
+      z: number;
+      config: PolyominoCubeConfig | undefined;
+    }[] = [];
+
+    // 遍历所有已占用的层，找出需要移动的方块
+    const occupiedLayers = this.fixedCubeList.getOccupiedLayers();
+    for (const y of occupiedLayers) {
+      if (y > startY) {
+        const layerKeys = this.fixedCubeList.getLayerKeys(y);
+        for (const key of layerKeys) {
+          const [x, _, z] = key.split(',').map(Number);
+          cubesToMove.push({
+            x,
+            y,
+            z,
+            config: this.fixedCubeList.getCubeConfig(x, y, z),
+          });
+        }
+      }
+    }
+
+    // 先移除这些方块
+    for (const cube of cubesToMove) {
+      this.fixedCubeList.removeCube(cube.x, cube.y, cube.z);
+    }
+
+    // 再重新添加到新位置（Y-1）
+    for (const cube of cubesToMove) {
+      const newPosition = new Vector3(cube.x, cube.y - 1, cube.z);
+      this.fixedCubeList.addCube(newPosition, cube.config);
+    }
+  }
+
   spawnPolyominoByType(type: PolyominoType) {
     // 移除旧的方块
     if (this.currentPolyomino) {

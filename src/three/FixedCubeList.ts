@@ -79,4 +79,64 @@ export default class FixedCubeList extends Object3D {
     const key = this.getKey(x, y, z);
     return this.cubeMap.has(key);
   }
+
+  /**
+   * 获取指定Y层的所有方块键
+   * @param y Y坐标
+   * @returns 该层所有方块的key数组
+   */
+  getLayerKeys(y: number): string[] {
+    const keys: string[] = [];
+    this.cubeMap.forEach((_, key) => {
+      const parts = key.split(',').map(Number);
+      if (parts[1] === y) {
+        keys.push(key);
+      }
+    });
+    return keys;
+  }
+
+  /**
+   * 检查指定Y层是否完整
+   * @param y Y坐标
+   * @param width 世界宽度（X范围）
+   * @param depth 世界深度（Z范围）
+   * @returns 是否完整
+   */
+  isLayerComplete(y: number, width: number, depth: number): boolean {
+    let count = 0;
+    this.cubeMap.forEach((_, key) => {
+      const parts = key.split(',').map(Number);
+      if (parts[1] === y) {
+        count++;
+      }
+    });
+    return count === width * depth;
+  }
+
+  /**
+   * 获取所有已占用的Y层坐标（去重）
+   * @returns Y坐标数组，从高层到低层排序
+   */
+  getOccupiedLayers(): number[] {
+    const layers = new Set<number>();
+    this.cubeMap.forEach((_, key) => {
+      const parts = key.split(',').map(Number);
+      layers.add(parts[1]);
+    });
+    return Array.from(layers).sort((a, b) => b - a);
+  }
+
+  /**
+   * 获取指定位置方块的配置
+   * @param x X坐标
+   * @param y Y坐标
+   * @param z Z坐标
+   * @returns 方块配置
+   */
+  getCubeConfig(x: number, y: number, z: number): PolyominoCubeConfig | undefined {
+    const key = this.getKey(x, y, z);
+    const cube = this.cubeMap.get(key);
+    return cube?.config;
+  }
 }
